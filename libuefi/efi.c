@@ -10,6 +10,11 @@ struct EFI_GUID sfsp_guid = {0x0964e5b22,
                              0x11d2,
                              {0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b}};
 
+struct EFI_GUID fi_guid = {0x09576e92,
+                           0x6d3f,
+                           0x11d2,
+                           {0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b}};
+
 void efi_init(struct EFI_SYSTEM_TABLE *system_table) {
   struct EFI_GUID gop_guid = {0x9042a9de,
                               0x23dc,

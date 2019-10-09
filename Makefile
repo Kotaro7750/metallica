@@ -5,7 +5,7 @@ OBJS=metallica.o config.o
 
 metallica.efi: $(OBJS) libuefi/libuefi.a
 	$(CC) $(CFLAGS) -e efi_main -o $@ $+
-	mv metallica.efi ./fs/EFI/BOOT/BOOTX64.efi
+	mv metallica.efi ../nova/fs/EFI/BOOT/BOOTX64.efi
 
 %.o: %.c
 	$(CC) $(CFLAGS) -Iinclude -c -o $@ $<
@@ -14,7 +14,7 @@ libuefi/libuefi.a:
 	make -C libuefi CC=$(CC) CFLAGS="$(CFLAGS)"
 
 run:
-	$(QEMU) -m 4G -bios OVMF.fd -hda fat:rw:fs -boot c
+	$(QEMU) -m 4G -bios OVMF.fd -hda fat:rw:../nova/fs -boot c
 
 clean:
 	rm -f *~ include/*~ *.o *.efi fs/EFI/BOOT/BOOTX64.efi

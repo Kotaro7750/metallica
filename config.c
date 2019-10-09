@@ -13,3 +13,11 @@ void config_init(void) {
   puts(L'\0');
   puts(L"\r\n");
 }
+
+void load_config(struct EFI_FILE_PROTOCOL *root,
+                 unsigned short *conf_file_name) {
+  put_param(L"kernel_start", conf.kernel_start);
+  put_param(L"stack_base", conf.stack_base);
+  put_param(L"fs_start", conf.fs_start);
+  put_param(L"enable_ap", conf.enable_ap);
+}

@@ -1,5 +1,5 @@
 AR = x86_64-w64-mingw32-ar
-OBJS = common.o efi.o file.o fb.o
+OBJS = common.o efi.o file.o fb.o mem.o
 
 libuefi.a: $(OBJS)
 	$(AR) rcs $@ $^

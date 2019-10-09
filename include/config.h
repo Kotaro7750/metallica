@@ -19,6 +19,8 @@
 #define CONF_NAME_ENABLE_AP "enable_ap"
 #define CONF_DEFAULT_ENABLE_AP FALSE
 
+#include "efi.h"
+
 struct config_list {
   unsigned long long kernel_start;
   unsigned long long stack_base;
