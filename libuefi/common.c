@@ -46,6 +46,14 @@ unsigned char check_warn_error(unsigned long long status, unsigned short *messag
 	return !status;
 }
 
+void put_param(unsigned short *name, unsigned long long val)
+{
+	puts(name);
+	puts(L": 0x");
+	puth(val, 16);
+	puts(L"\r\n");
+}
+
 void assert(unsigned long long status, unsigned short *message)
 {
 	if (!check_warn_error(status, message))

@@ -1,10 +1,17 @@
 #ifndef _EFI_H_
 #define _EFI_H_
+
 struct EFI_GUID {
 	unsigned int Data1;
 	unsigned short Data2;
 	unsigned short Data3;
 	unsigned char Data4[8];
+};
+
+enum EFI_LOCATE_SEARCH_TYPE {
+	AllHandles,
+	ByRegisterNotify,
+	ByProtocol
 };
 
 struct EFI_SYSTEM_TABLE {
@@ -215,7 +222,40 @@ struct EFI_SYSTEM_TABLE {
 	} *ConfigurationTable;
 };
 
+
+struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL {
+	unsigned long long Revision;
+	unsigned long long (*OpenVolume)(
+		struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *This,
+		struct EFI_FILE_PROTOCOL **Root);
+};
+
+struct EFI_FILE_PROTOCOL {
+	unsigned long long _buf;
+	unsigned long long (*Open)(struct EFI_FILE_PROTOCOL *This,
+				   struct EFI_FILE_PROTOCOL **NewHandle,
+				   unsigned short *FileName,
+				   unsigned long long OpenMode,
+				   unsigned long long Attributes);
+	unsigned long long (*Close)(struct EFI_FILE_PROTOCOL *This);
+	unsigned long long _buf2;
+	unsigned long long (*Read)(struct EFI_FILE_PROTOCOL *This,
+				   unsigned long long *BufferSize,
+				   void *Buffer);
+	unsigned long long (*Write)(struct EFI_FILE_PROTOCOL *This,
+				    unsigned long long *BufferSize,
+				    void *Buffer);
+	unsigned long long _buf3[2];
+	unsigned long long (*GetInfo)(struct EFI_FILE_PROTOCOL *This,
+				      struct EFI_GUID *InformationType,
+				      unsigned long long *BufferSize,
+				      void *Buffer);
+	unsigned long long _buf4;
+	unsigned long long (*Flush)(struct EFI_FILE_PROTOCOL *This);
+};
+
 extern struct EFI_SYSTEM_TABLE *ST;
+extern struct EFI_GUID sfsp_guid;
 
 void efi_init(struct EFI_SYSTEM_TABLE* system_table);
 #endif

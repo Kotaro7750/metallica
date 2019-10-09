@@ -3,12 +3,12 @@ CFLAGS= -Wall -Wextra -e efi_main -nostdinc -nostdlib -fno-builtin -Wl,--subsyst
 QEMU=qemu-system-x86_64
 OBJS=metallica.o config.o
 
-metallica.efi: libuefi/libuefi.a $(OBJS) 
+metallica.efi: $(OBJS) libuefi/libuefi.a
 	$(CC) $(CFLAGS) -e efi_main -o $@ $+
 	mv metallica.efi ./fs/EFI/BOOT/BOOTX64.efi
 
 %.o: %.c
-	$(CC) $(CFLAGS) -Iinclude -c -o $@ $+
+	$(CC) $(CFLAGS) -Iinclude -c -o $@ $<
 
 libuefi/libuefi.a:
 	make -C libuefi CC=$(CC) CFLAGS="$(CFLAGS)"
@@ -18,5 +18,6 @@ run:
 
 clean:
 	rm -f *~ include/*~ *.o *.efi fs/EFI/BOOT/BOOTX64.efi
+	make -C libuefi clean
 
 .PHONY:clean
