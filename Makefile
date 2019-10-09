@@ -10,7 +10,7 @@ metallica.efi: $(OBJS) libuefi/libuefi.a
 %.o: %.c
 	$(CC) $(CFLAGS) -Iinclude -c -o $@ $<
 
-libuefi/libuefi.a:
+libuefi/libuefi.a: libuefi/*.c
 	make -C libuefi CC=$(CC) CFLAGS="$(CFLAGS)"
 
 run:
