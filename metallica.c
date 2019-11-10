@@ -6,8 +6,12 @@
 #include "include/mem.h"
 
 #define KERNEL_FILE_NAME L"kernel.bin"
+#define FS_FILE_NAME L"fs.img"
+
 void load_kernel(struct EFI_FILE_PROTOCOL *root,
                  unsigned short *kernel_file_name);
+unsigned char load_fs(struct EFI_FILE_PROTOCOL *root,
+                      unsigned short *file_system_file_name);
 
 void put_n_bytes(unsigned char *addr, unsigned int num);
 
@@ -36,7 +40,7 @@ void efi_main(void *ImageHandle __attribute__((unused)),
   load_config(root, CONF_FILE_NAME);
   load_kernel(root, KERNEL_FILE_NAME);
 
-  unsigned char has_fs = TRUE;
+  unsigned char has_fs = load_fs(root, FS_FILE_NAME);
 
   // init frame buffer
   init_fb();
@@ -87,8 +91,6 @@ void efi_main(void *ImageHandle __attribute__((unused)),
 
   while (TRUE)
     ;
-  while (1)
-    ;
 }
 
 void load_kernel(struct EFI_FILE_PROTOCOL *root,
@@ -126,6 +128,35 @@ void load_kernel(struct EFI_FILE_PROTOCOL *root,
       (unsigned char *)(conf.kernel_start + kernel_size - 16);
   put_n_bytes(kernel_last, 16);
   puts(L"\r\n");
+}
+
+unsigned char load_fs(struct EFI_FILE_PROTOCOL *root,
+                      unsigned short *file_system_file_name) {
+  struct EFI_FILE_PROTOCOL *file_system;
+  unsigned long long status = root->Open(
+      root, &file_system, file_system_file_name, EFI_FILE_MODE_READ, 0);
+  if (!check_warn_error(status, L"root->Open(fs)")) {
+    puts(L"fs load failure. skip.\r\n");
+    return FALSE;
+  }
+
+  unsigned long long fs_size = get_file_size(file_system);
+  put_param(L"fs_size", fs_size);
+
+  puts(L"load fs ... ");
+  safety_file_read(file_system, (void *)conf.fs_start, fs_size);
+  puts(L"done\r\n");
+  file_system->Close(file_system);
+
+  puts(L"fs first 16 bytes: 0x");
+  put_n_bytes((unsigned char *)conf.fs_start, 16);
+  puts(L"\r\n");
+  puts(L"fs last 16 bytes: 0x");
+  unsigned char *fs_last = (unsigned char *)(conf.fs_start + fs_size - 16);
+  put_n_bytes(fs_last, 16);
+  puts(L"\r\n");
+
+  return TRUE;
 }
 
 void put_n_bytes(unsigned char *addr, unsigned int num) {

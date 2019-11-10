@@ -10,5 +10,6 @@ void put_param(unsigned short *name, unsigned long long val);
 void puts(unsigned short *s);
 unsigned char check_warn_error(unsigned long long status,
                                unsigned short *message);
+void puth(unsigned long long val, unsigned char num_digits);
 void assert(unsigned long long status, unsigned short *message);
 #endif
